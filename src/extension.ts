@@ -7,6 +7,7 @@ export function activate(context: vscode.ExtensionContext) {
 		if (editor) {
 			const filePath = editor.document.fileName;
 			const workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+			
 			if (workspaceFolder) {
 				const workspacePath = workspaceFolder.uri.fsPath;
 
@@ -18,6 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
 					}
 
 					exec(`git blame ${filePath}`, { cwd: workspacePath }, (error, stdout, stderr) => {
+						console.log('workspaceFolder==========', workspaceFolder, filePath);
 						if (error) {
 							vscode.window.showErrorMessage(`Error: ${stderr}`);
 							return;
@@ -115,15 +117,18 @@ export function activate(context: vscode.ExtensionContext) {
 							if (selectedDecoration) {
 								const commitHash = selectedDecoration.renderOptions?.before?.contentText?.trim().split(' ')[0];
 								console.log(`Selected commit hash: ${commitHash}`); // 添加日志
+								console.log(`Selected commit repoPath: ${workspaceFolder.uri.path}`); // 添加日志
 								if (commitHash) {
 									// 检查 GitLens 是否能够匹配 commit graph 信息
 									vscode.commands.executeCommand('gitlens.showInCommitGraphView', { 
-										ref: '68dccb7b79efa682ecea4568024df7b491e7e4d2', 
-										id: commitHash, 
-										preserveFocus: true,
-										attachedTo: 'graph'
-									})
-									    .then(() => {
+										ref: {
+											name: commitHash,
+											ref: commitHash,
+											refType: 'revision',
+											repoPath: workspaceFolder.uri.path,
+											sha: commitHash
+										}, 
+									}).then(() => {
 											console.log(`Successfully executed command for commit hash: ${commitHash}`);
 										}, (err) => {
 											console.error(`Failed to execute command for commit hash: ${commitHash}`, err);
