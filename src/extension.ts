@@ -7,7 +7,7 @@ export function activate(context: vscode.ExtensionContext) {
 		if (editor) {
 			const filePath = editor.document.fileName;
 			const workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
-			
+
 			if (workspaceFolder) {
 				const workspacePath = workspaceFolder.uri.fsPath;
 
@@ -82,11 +82,14 @@ export function activate(context: vscode.ExtensionContext) {
 												fontWeight: 'normal',
 												margin: '0 1em 0 0',
 												textDecoration: 'none',
-												borderRadius: '3px', // 添加圆角
+												borderRadius: '3px 0 0 3px', // 添加圆角
 												padding: '0 5px', // 添加内边距
 												width: `${maxLength + 1}ch`, // 设置固定宽度
 												display: 'inline-block', // 确保为块级元素
-												cursor: 'pointer' // 添加鼠标指针样式
+												cursor: 'block',
+												borderWidth: '0 2px 0 0',
+												borderStyle: 'solid',
+												borderColor: 'rgb(111,99,212)',
 											},
 											light: {
 												before: {
@@ -97,7 +100,7 @@ export function activate(context: vscode.ExtensionContext) {
 											dark: {
 												before: {
 													color: 'rgb(142,145,152)', // 深色主题下的字体颜色
-													backgroundColor: 'rgba(36,41,57,0.7)' // 深色主题下的背景颜色
+													backgroundColor: 'rgba(36,41,57,0.7)', // 深色主题下的背景颜色
 												}
 											}
 										}
@@ -120,20 +123,20 @@ export function activate(context: vscode.ExtensionContext) {
 								console.log(`Selected commit repoPath: ${workspaceFolder.uri.path}`); // 添加日志
 								if (commitHash) {
 									// 检查 GitLens 是否能够匹配 commit graph 信息
-									vscode.commands.executeCommand('gitlens.showInCommitGraphView', { 
+									vscode.commands.executeCommand('gitlens.showInCommitGraphView', {
 										ref: {
 											name: commitHash,
 											ref: commitHash,
 											refType: 'revision',
 											repoPath: workspaceFolder.uri.path,
 											sha: commitHash
-										}, 
+										},
 									}).then(() => {
-											console.log(`Successfully executed command for commit hash: ${commitHash}`);
-										}, (err) => {
-											console.error(`Failed to execute command for commit hash: ${commitHash}`, err);
-											vscode.window.showErrorMessage(`Failed to execute command for commit hash: ${commitHash}`);
-										});
+										console.log(`Successfully executed command for commit hash: ${commitHash}`);
+									}, (err) => {
+										console.error(`Failed to execute command for commit hash: ${commitHash}`, err);
+										vscode.window.showErrorMessage(`Failed to execute command for commit hash: ${commitHash}`);
+									});
 								}
 							}
 						});
