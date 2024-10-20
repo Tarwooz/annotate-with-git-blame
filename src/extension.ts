@@ -19,7 +19,6 @@ export function activate(context: vscode.ExtensionContext) {
 					}
 
 					exec(`git blame ${filePath}`, { cwd: workspacePath }, (error, stdout, stderr) => {
-						console.log('workspaceFolder==========', workspaceFolder, filePath);
 						if (error) {
 							vscode.window.showErrorMessage(`Error: ${stderr}`);
 							return;
@@ -115,9 +114,16 @@ export function activate(context: vscode.ExtensionContext) {
 
 						// 添加点击事件
 						const selectionChangeListener = vscode.window.onDidChangeTextEditorSelection((e: vscode.TextEditorSelectionChangeEvent) => {
-							const selectedLine = e.selections[0].start.line;
+							// 获取当前选择的文本范围
+							let selection = e.selections[0];
+							// 获取点击位置的字符
+							let position = selection.active;
+
+							const selectedLine = selection.start.line;
 							const selectedDecoration = decorations.find(decoration => decoration.range.start.line === selectedLine);
-							if (selectedDecoration) {
+
+							// position.character === 0是为了实现：只能在commit 信息区域时才能跳转~~
+							if (selectedDecoration && position.character === 0) {
 								const commitHash = selectedDecoration.renderOptions?.before?.contentText?.trim().split(' ')[0];
 								console.log(`Selected commit hash: ${commitHash}`); // 添加日志
 								console.log(`Selected commit repoPath: ${workspaceFolder.uri.path}`); // 添加日志
