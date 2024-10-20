@@ -2,6 +2,37 @@ import * as vscode from 'vscode';
 import { exec } from 'child_process';
 
 export function activate(context: vscode.ExtensionContext) {
+	// 定义一个函数来检测当前文件是否在 Git 管理的项目中
+	function checkGitRepositoryForActiveEditor() {
+		const editor = vscode.window.activeTextEditor;
+		if (editor) {
+			const workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+			if (workspaceFolder) {
+				const workspacePath = workspaceFolder.uri.fsPath;
+				// 检查当前文件是否在 Git 管理的项目中
+				exec(`git rev-parse --is-inside-work-tree`, { cwd: workspacePath }, (error, stdout) => {
+					if (error || stdout.trim() !== 'true') {
+						vscode.commands.executeCommand('setContext', 'isGitRepository', false);
+					} else {
+						vscode.commands.executeCommand('setContext', 'isGitRepository', true);
+					}
+				});
+			} else {
+				vscode.commands.executeCommand('setContext', 'isGitRepository', false);
+			}
+		} else {
+			vscode.commands.executeCommand('setContext', 'isGitRepository', false);
+		}
+	}
+
+	// 激活时检查当前活动的文件
+	checkGitRepositoryForActiveEditor();
+
+	// 动态设置 isGitRepository 上下文，监听文件切换
+	vscode.window.onDidChangeActiveTextEditor(() => {
+		checkGitRepositoryForActiveEditor();
+	});
+
 	let disposable = vscode.commands.registerCommand('extension.annotateWithGitBlame', () => {
 		const editor = vscode.window.activeTextEditor;
 		if (editor) {
@@ -24,6 +55,7 @@ export function activate(context: vscode.ExtensionContext) {
 							return;
 						}
 
+						// 处理 git blame 输出
 						const blameInfo = stdout.split('\n');
 						const decorations: vscode.DecorationOptions[] = [];
 						let maxLength = 0;
@@ -147,17 +179,13 @@ export function activate(context: vscode.ExtensionContext) {
 							}
 						});
 
-						// 监听文件切换事件，移除监听器
-						const activeEditorChangeListener = vscode.window.onDidChangeActiveTextEditor(() => {
+						// 监听文件切换，自动清理装饰器和事件
+						vscode.window.onDidChangeActiveTextEditor(() => {
+							blameDecorationType.dispose();
 							selectionChangeListener.dispose();
 						});
-
-						context.subscriptions.push(selectionChangeListener);
-						context.subscriptions.push(activeEditorChangeListener);
 					});
 				});
-			} else {
-				vscode.window.showErrorMessage('This file is not part of any workspace.');
 			}
 		}
 	});
