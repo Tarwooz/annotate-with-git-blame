@@ -9,7 +9,7 @@
   "categories": [
     "Other"
   ],
- "activationEvents": [
+  "activationEvents": [
     "*"
   ],
   "main": "./out/extension.js",
@@ -17,14 +17,25 @@
     "commands": [
       {
         "command": "extension.annotateWithGitBlame",
-        "title": "Annotate with Git Blame"
+        "title": "Annotate with Git Blame",
+        "category": "Git"
+      },
+      {
+        "command": "extension.clearAnnotations",
+        "title": "Clear Annotate",
+        "category": "Git"
       }
     ],
     "menus": {
       "editor/context": [
         {
           "command": "extension.annotateWithGitBlame",
-          "when": "isGitRepository",
+          "when": "isGitRepository && blameActive == false",
+          "group": "navigation"
+        },
+        {
+          "command": "extension.clearAnnotations",
+          "when": "isGitRepository && blameActive == true",
           "group": "navigation"
         }
       ]

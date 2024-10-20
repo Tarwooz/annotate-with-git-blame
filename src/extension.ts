@@ -2,12 +2,20 @@ import * as vscode from 'vscode';
 import { exec } from 'child_process';
 
 export function activate(context: vscode.ExtensionContext) {
+	let isBlameActive = false;
+	let blameDecorationType: vscode.TextEditorDecorationType | undefined;
+	let selectionChangeListener: vscode.Disposable | undefined;
+
 	// 定义一个函数来检测当前文件是否在 Git 管理的项目中
 	function checkGitRepositoryForActiveEditor() {
 		const editor = vscode.window.activeTextEditor;
 		if (editor) {
 			const workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
 			if (workspaceFolder) {
+				// 默认启动文件，blameActive都是false
+				isBlameActive = false;
+				vscode.commands.executeCommand('setContext', 'blameActive', false);
+
 				const workspacePath = workspaceFolder.uri.fsPath;
 				// 检查当前文件是否在 Git 管理的项目中
 				exec(`git rev-parse --is-inside-work-tree`, { cwd: workspacePath }, (error, stdout) => {
@@ -34,6 +42,14 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	let disposable = vscode.commands.registerCommand('extension.annotateWithGitBlame', () => {
+		if (isBlameActive) {
+			vscode.window.showWarningMessage('Annotate with Git Blame is already active.');
+			return;
+		}
+
+		isBlameActive = true;
+		vscode.commands.executeCommand('setContext', 'blameActive', true);
+
 		const editor = vscode.window.activeTextEditor;
 		if (editor) {
 			const filePath = editor.document.fileName;
@@ -141,11 +157,11 @@ export function activate(context: vscode.ExtensionContext) {
 							}
 						});
 
-						const blameDecorationType = vscode.window.createTextEditorDecorationType({});
+						blameDecorationType = vscode.window.createTextEditorDecorationType({});
 						editor.setDecorations(blameDecorationType, decorations);
 
 						// 添加点击事件
-						const selectionChangeListener = vscode.window.onDidChangeTextEditorSelection((e: vscode.TextEditorSelectionChangeEvent) => {
+						selectionChangeListener = vscode.window.onDidChangeTextEditorSelection((e: vscode.TextEditorSelectionChangeEvent) => {
 							// 获取当前选择的文本范围
 							let selection = e.selections[0];
 							// 获取点击位置的字符
@@ -181,8 +197,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 						// 监听文件切换，自动清理装饰器和事件
 						vscode.window.onDidChangeActiveTextEditor(() => {
-							blameDecorationType.dispose();
-							selectionChangeListener.dispose();
+							if (blameDecorationType) {
+								blameDecorationType.dispose();
+							}
+							if (selectionChangeListener) {
+								selectionChangeListener.dispose();
+							}
 						});
 					});
 				});
@@ -190,7 +210,36 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
+	// 注册 Clear Annotate 命令
+	let clearDisposable = vscode.commands.registerCommand('extension.clearAnnotations', () => {
+		if (!isBlameActive) {
+			vscode.window.showWarningMessage('No annotations to clear.');
+			return;
+		}
+
+		isBlameActive = false;
+		vscode.commands.executeCommand('setContext', 'blameActive', false);
+
+		const editor = vscode.window.activeTextEditor;
+		if (editor) {
+			// 创建一个空的 TextEditorDecorationType 来清除所有装饰
+			const emptyDecorationType = vscode.window.createTextEditorDecorationType({});
+			editor.setDecorations(emptyDecorationType, []);  // 清除所有装饰
+		}
+
+		// 清理状态
+		if (blameDecorationType) {
+			blameDecorationType.dispose();
+			blameDecorationType = undefined;
+		}
+		if (selectionChangeListener) {
+			selectionChangeListener.dispose();
+			selectionChangeListener = undefined;
+		}
+	});
+
 	context.subscriptions.push(disposable);
+	context.subscriptions.push(clearDisposable);
 }
 
 export function deactivate() { }
