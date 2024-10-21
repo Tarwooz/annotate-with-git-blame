@@ -1,7 +1,7 @@
 {
   "name": "annotate-with-git-blame",
   "displayName": "annotate-with-git-blame",
-  "description": "",
+  "description": "A VS Code extension that displays Git commit information for each line of code, with GitLens integration for navigating to the commit graph.",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.92.0"
@@ -63,7 +63,7 @@
     "eslint": "^8.57.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.5.4",
-    "webpack": "^5.92.1",
+    "webpack": "^5.95.0",
     "webpack-cli": "^5.1.4"
   }
 }
