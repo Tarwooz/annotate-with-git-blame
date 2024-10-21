@@ -1,6 +1,6 @@
 {
   "name": "annotate-with-git-blame",
-  "displayName": "annotate-with-git-blame",
+  "displayName": "Mini Git Blame",
   "description": "A VS Code extension that displays Git commit information for each line of code, with GitLens integration for navigating to the commit graph.",
   "version": "0.0.1",
   "engines": {

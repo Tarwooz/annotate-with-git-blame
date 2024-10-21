@@ -1,6 +1,6 @@
 ### 中文版 README.md
 
-# VS Code Annotate with Git Blame 插件
+# VS Code Mini Git Blame 插件
 
 ## 插件简介
 
@@ -23,13 +23,13 @@
 
 ## 安装
 
-在 VS Code 扩展市场搜索并安装 "Annotate with Git Blame"。
+在 VS Code 扩展市场搜索并安装 "Mini Git Blame"。
 
 ---
 
 ### English README.md
 
-# VS Code Annotate with Git Blame Extension
+# VS Code Mini Git Blame Extension
 
 ## Introduction
 
@@ -52,7 +52,7 @@ If GitLens is installed, you can also click on the commit info to navigate to th
 
 ## Installation
 
-Search for "Annotate with Git Blame" in the VS Code marketplace and install.
+Search for "Mini Git Blame" in the VS Code marketplace and install.
 
 ---
 
