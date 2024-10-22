@@ -3,6 +3,10 @@
   "displayName": "Mini Git Blame",
   "description": "A VS Code extension that displays Git commit information for each line of code, with GitLens integration for navigating to the commit graph.",
   "icon": "./src/assets/kabi.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hao-Warming/annotate-with-git-blame.git"
+  },
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.92.0"
