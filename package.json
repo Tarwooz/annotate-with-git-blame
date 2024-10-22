@@ -2,14 +2,15 @@
   "name": "annotate-with-git-blame",
   "displayName": "Mini Git Blame",
   "description": "A VS Code extension that displays Git commit information for each line of code, with GitLens integration for navigating to the commit graph.",
-  "icon": "./src/assets/kabi.png",
+  "icon": "images/kabi.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/Hao-Warming/annotate-with-git-blame.git"
   },
+  "publisher": "Warming",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.92.0"
+    "vscode": "^1.82.0"
   },
   "categories": [
     "Other"
@@ -17,7 +18,7 @@
   "activationEvents": [
     "*"
   ],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
@@ -60,7 +61,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
-    "@types/vscode": "^1.92.0",
+    "@types/vscode": "^1.82.0",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "@typescript-eslint/parser": "^7.11.0",
     "@vscode/test-cli": "^0.0.9",
