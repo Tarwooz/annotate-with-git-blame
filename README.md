@@ -19,7 +19,7 @@
 1. 右键代码文件，选择 "Annotate with Git Blame"。
 2. 如安装了 GitLens，点击提交记录可跳转到提交图。
 3. 使用 "Clear Annotate" 清理注解。
-![preview](./src/assets/Annotate.gif)
+![preview](./images/Annotate.gif)
 
 ## 安装
 
@@ -48,7 +48,7 @@ If GitLens is installed, you can also click on the commit info to navigate to th
 1. Right-click in a code file and select "Annotate with Git Blame."
 2. If GitLens is installed, click commit info to open the commit graph.
 3. Use "Clear Annotate" to remove annotations.
-![preview](./src/assets/Annotate.gif)
+![preview](./images/Annotate.gif)
 
 ## Installation
 
