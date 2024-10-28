@@ -78,11 +78,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 						// 计算最长的 blame 信息长度
 						blameInfo.forEach((line) => {
-							let match = line.match(/^(\^?\w+)\s\((.*?)\s+(\d{4}-\d{2}-\d{2})\s.*?\s(\d+)\)\s/);
-
+							let match = line.match(/^\^?(\w+)\s\((.*?)\s+(\d{4}-\d{2}-\d{2})\s.*?\s(\d+)\)\s/);
 							// 检测 Vue 文件中的 `blameInfo` 格式
 							if (!match) {
-								match = line.match(/^(\^?\w+)\s.*?\((.*?)\s+(\d{4}-\d{2}-\d{2})\s.*?\s(\d+)\)\s/);
+								match = line.match(/^\^?(\w+)\s.*?\((.*?)\s+(\d{4}-\d{2}-\d{2})\s.*?\s(\d+)\)\s/);
 							}
 
 							if (match) {
@@ -97,11 +96,10 @@ export function activate(context: vscode.ExtensionContext) {
 						});
 
 						blameInfo.forEach((line, index) => {
-							let match = line.match(/^(\^?\w+)\s\((.*?)\s+(\d{4}-\d{2}-\d{2})\s.*?\s(\d+)\)\s/);
-
+							let match = line.match(/^\^?(\w+)\s\((.*?)\s+(\d{4}-\d{2}-\d{2})\s.*?\s(\d+)\)\s/);
 							// 检测 Vue 文件中的 `blameInfo` 格式
 							if (!match) {
-								match = line.match(/^(\^?\w+)\s.*?\((.*?)\s+(\d{4}-\d{2}-\d{2})\s.*?\s(\d+)\)\s/);
+								match = line.match(/^\^?(\w+)\s.*?\((.*?)\s+(\d{4}-\d{2}-\d{2})\s.*?\s(\d+)\)\s/);
 							}
 
 							if (match) {
