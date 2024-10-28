@@ -8,7 +8,7 @@
     "url": "https://github.com/Hao-Warming/annotate-with-git-blame.git"
   },
   "publisher": "Warming",
-  "version": "0.0.1",
+  "version": "1.0.2",
   "engines": {
     "vscode": "^1.82.0"
   },
