@@ -1,5 +1,6 @@
 import * as vscode from 'vscode'
 import { exec } from 'child_process'
+import moment from 'moment' // 修改 moment 库的导入方式
 
 export function activate(context: vscode.ExtensionContext) {
     let isBlameActive = false
@@ -105,9 +106,21 @@ export function activate(context: vscode.ExtensionContext) {
                             if (match) {
                                 const commitHash = match[1]
                                 const author = match[2]
-                                const date = match[3].replace(/-/g, '/') // 将日期格式转换为年/月/日
+                                const date = match[3]
                                 const lineNumber = parseInt(match[4], 10) - 1
-                                let blameText = `${date} ${author}`
+
+                                // 使用 moment 计算日期差异
+                                const dateMoment = moment(date, 'YYYY-MM-DD')
+                                const now = moment()
+                                let blameText = ''
+
+                                if (now.diff(dateMoment, 'days') <= 7) {
+                                    blameText = dateMoment.fromNow() // 显示为 xx ago
+                                } else {
+                                    blameText = dateMoment.format('YYYY/MM/DD') // 显示完整日期
+                                }
+
+                                blameText += ` ${author}`
 
                                 // 补齐长度
                                 while (blameText.length < maxLength) {
