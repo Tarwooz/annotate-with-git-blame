@@ -87,7 +87,7 @@ export function activate(context: vscode.ExtensionContext) {
 
                             if (match) {
                                 const commitHash = match[1]
-                                const author = match[2]
+                                let author = match[2]
                                 const date = match[3].replace(/-/g, '/') // 将日期格式转换为年/月/日
                                 const blameText = `${date} ${author}`
                                 if (commitHash !== '000000000' && blameText.length > maxLength) {
@@ -105,9 +105,19 @@ export function activate(context: vscode.ExtensionContext) {
 
                             if (match) {
                                 const commitHash = match[1]
-                                const author = match[2]
+                                let author = match[2]
                                 const date = match[3]
                                 const lineNumber = parseInt(match[4], 10) - 1
+
+                                // 处理 author 中的 @
+                                if (author.includes('@')) {
+                                    author = author.split('@')[0]
+                                }
+
+                                // 如果 author 是 "Not Committed Yet"，则显示 "NCY"
+                                if (author === 'Not Committed Yet') {
+                                    author = 'NCY'
+                                }
 
                                 // 使用 moment 计算日期差异
                                 const dateMoment = moment(date, 'YYYY-MM-DD')
@@ -129,13 +139,26 @@ export function activate(context: vscode.ExtensionContext) {
 
                                 // 过滤掉未提交的修改
                                 if (commitHash !== '000000000') {
+                                    let backgroundColor = 'rgba(36,41,57,0.7)' // 默认背景颜色
+                                    let textColor = 'rgb(255,255,255)' // 默认文字颜色
+                                    const daysDiff = now.diff(dateMoment, 'days')
+
+                                    if (daysDiff <= 1) {
+                                        backgroundColor = 'rgba(0, 122, 255, 0.9)' // 1天内，亮蓝色
+                                    } else if (daysDiff <= 7) {
+                                        backgroundColor = 'rgba(0, 122, 255, 0.7)' // 1周内，较亮蓝色
+                                    } else {
+                                        backgroundColor = 'rgba(36,41,57,0.7)' // 七天之外，默认背景颜色
+                                        textColor = 'rgb(142,145,152)' // 七天之外，默认文字颜色
+                                    }
+
                                     const decoration = {
                                         range: new vscode.Range(lineNumber, 0, lineNumber, 0),
                                         renderOptions: {
                                             before: {
                                                 contentText: ` ${blameText}`,
-                                                color: 'rgb(142,145,152)', // 字体颜色
-                                                backgroundColor: 'rgba(36,41,57,0.7)', // 背景颜色
+                                                color: textColor, // 动态设置文字颜色
+                                                backgroundColor: backgroundColor, // 动态设置背景颜色
                                                 fontStyle: 'normal',
                                                 fontWeight: 'normal',
                                                 margin: '0 1em 0 0',
@@ -151,14 +174,50 @@ export function activate(context: vscode.ExtensionContext) {
                                             },
                                             light: {
                                                 before: {
-                                                    color: '#000000', // 浅色主题下的字体颜色
-                                                    backgroundColor: '#F3F3F3', // 浅色主题下的背景颜色
+                                                    color: textColor, // 浅色主题下的文字颜色
+                                                    backgroundColor: backgroundColor, // 动态设置背景颜色
                                                 },
                                             },
                                             dark: {
                                                 before: {
-                                                    color: 'rgb(142,145,152)', // 深色主题下的字体颜色
-                                                    backgroundColor: 'rgba(36,41,57,0.7)', // 深色主题下的背景颜色
+                                                    color: textColor, // 深色主题下的文字颜色
+                                                    backgroundColor: backgroundColor, // 动态设置背景颜色
+                                                },
+                                            },
+                                        },
+                                    }
+                                    decorations.push(decoration)
+                                } else {
+                                    const decoration = {
+                                        range: new vscode.Range(lineNumber, 0, lineNumber, 0),
+                                        renderOptions: {
+                                            before: {
+                                                contentText: ` NCY`,
+                                                color: 'rgb(255,0,0)', // 红色文字
+                                                backgroundColor: 'rgba(36,41,57,0.7)', // 默认背景颜色
+                                                fontStyle: 'normal',
+                                                fontWeight: 'normal',
+                                                margin: '0 1em 0 0',
+                                                textDecoration: 'none',
+                                                borderRadius: '3px 0 0 3px', // 添加圆角
+                                                padding: '0 5px', // 添加内边距
+                                                width: `${maxLength + 1}ch`, // 设置固定宽度
+                                                display: 'inline-block', // 确保为块级元素
+                                                cursor: 'block',
+                                                borderWidth: '0 2px 0 0',
+                                                borderStyle: 'solid',
+                                                borderColor: 'rgb(111,99,212)',
+                                            },
+                                            light: {
+                                                before: {
+                                                    color: 'rgb(255,0,0)', // 浅色主题下的红色文字
+                                                    backgroundColor: 'rgba(36,41,57,0.7)', // 默认背景颜色
+                                                },
+                                            },
+                                            dark: {
+                                                before: {
+                                                    color: 'rgb(255,0,0)', // 深色主题下的红色文字
+                                                    backgroundColor: 'rgba(36,41,57,0.7)', // 默认背景颜色
                                                 },
                                             },
                                         },
