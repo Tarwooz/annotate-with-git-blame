@@ -39,6 +39,7 @@ export function registerCommands(context: vscode.ExtensionContext) {
                         const blameInfo = stdout.split('\n')
                         const decorations = createBlameDecorations(blameInfo, 0)
 
+                        // .
                         blameDecorationType = vscode.window.createTextEditorDecorationType({})
                         editor.setDecorations(blameDecorationType, decorations)
 
